@@ -1,0 +1,87 @@
+@import "./_variables.import.less";
+
+#about-outer {
+  width: 100%;
+  #about{
+    width: 1024px;
+    margin: 0 auto;
+    padding: 30px 0;
+    h2 {
+      font-size: 24px;
+      color: #666;
+      text-align: center;
+      letter-spacing: 3px;
+      span {
+        color: #fff;
+        text-shadow: 0 0 2px #666, 0 0 2px #444 , 0 0 2px #222;
+        &.grey {
+          font-size: 20px;
+          color: #d9d9d9;
+          text-shadow: none;
+        }
+      }
+    }
+  }
+}
+
+#game-list {
+  width: 1024px;
+  margin: 20px auto;
+  border-collapse: collapse;
+  text-align: center;
+  box-sizing: border-box;
+  thead {
+    tr {
+      th {
+        height: 38px;
+        line-height: 38px;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+      }
+    }
+  }
+  tbody {
+    tr {
+      &:hover {
+        background-color: #f5f5f5
+      }
+      td {
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+        .entries-box {
+          .entries-row {
+            display: flex;
+            justify-content: center;
+            .img-box {
+              width: 34px;
+              height: 34px;
+              padding: 18px 10px;
+              img {
+                width: 100%;
+              }
+            }
+            .name-box {
+              height: 38px;
+              line-height: 38px;
+              padding: 16px 0;
+            }
+          }
+        }
+        .lists-badge {
+          width: 50px;
+          height: 50px;
+          position: relative;
+          border-radius: 50%;
+          margin: 0px auto;
+          img {
+            width: 80%;
+            position: absolute;
+            top: 13%;
+            left: 10%;
+          }
+        }
+      }
+    }
+  }
+
+}

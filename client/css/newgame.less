@@ -1,0 +1,146 @@
+@import "./_variables.import.less";
+
+#newgame-outer {
+  width: 100%;
+  background: linear-gradient(to bottom, #ececec 0%, #f2f2f2 100%);
+  box-shadow: rgba(0, 0, 0, 0.117647) 0px 1px 6px, rgba(0, 0, 0, 0.117647) 0px 1px 4px;
+  padding: 20px 0;
+  margin: 0 auto;
+  #newgame {
+    width: 1024px;
+    display: flex;
+    margin: 0px auto;
+    background-color: #fff;
+    box-shadow: @shadow;
+    #newgame-left {
+      width: 500px;
+      .newgame-box {
+        padding: 8px 0;
+        display: flex;
+        position: relative;
+        & + .newgame-box:before {
+          content: '';
+          width: 460px;
+          height: 1px;
+          position: absolute;
+          top: 0px;
+          left: 20px;
+          border-top: 1px solid #d6d6d6;
+        }
+        .newgame-ttl {
+          width: 160px;
+          line-height: 60px;
+          font-size: 18px;
+          padding-left: 20px;
+          letter-spacing: 1px;
+          span {
+            display: block;
+            padding-left: 30px;
+          }
+          #newgame-badge {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            border-radius: 50%;
+            margin: 8px 40px;
+            img {
+              width: 80%;
+              position: absolute;
+              top: 13%;
+              left: 10%;
+            }
+          }
+        }
+        .newgame-content {
+          .label-box {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            letter-spacing: 1px;
+            label {
+              width: 110px;
+              display: block;
+              position: relative;
+              padding: 0 0 0 30px;
+              input {
+                display: none;
+              }
+              .radio-dot {
+                width: 20px;
+                height: 20px;
+                position: absolute;
+                top: 2px;
+                left: 0;
+                border-radius: 50%;
+                border: 1px solid #666;
+                .radio-dot-color {
+                  content: '';
+                  width: 14px;
+                  height: 14px;
+                  position: absolute;
+                  top: 3px;
+                  left: 3px;
+                  border-radius: 50%;
+                  opacity: 0;
+                  transition: background-color 0.25s linear;
+                }
+              }
+              #btn-king:checked ~ .radio-dot .radio-dot-color {
+                opacity: 1;
+                background-color: @scene-yellow;
+              }
+              #btn-pirate:checked ~ .radio-dot .radio-dot-color {
+                opacity: 1;
+                background-color: @scene-blue;
+              }
+              #btn-classic:checked ~ .radio-dot .radio-dot-color {
+                opacity: 1;
+              }
+              #btn-deathBattle:checked ~ .radio-dot .radio-dot-color {
+                opacity: 1;
+              }
+            }
+            &.roomname {
+              input {
+                width: 210px;
+                padding: 5px 13px;
+                font-size: 16px;
+                &:focus {
+                  box-shadow: @shadow;
+                  border: none;
+                  outline: none;
+                }
+              }
+            }
+          }
+          .p-box {
+            padding: 0 0 10px 0;
+            color: @grey;
+            font-size: 14px;
+            letter-spacing: 1px;
+          }
+        }
+      }
+    }
+    #newgame-right {
+      width: 524px - 30px;
+      height: 400px - 30px;
+      position: relative;
+      margin: 15px;
+      box-shadow: @shadow;
+      #scene-img {
+        width: 524px - 50px;
+        height: 400px - 50px;
+        position: relative;
+        margin: 10px;
+        overflow: hidden;
+        img {
+          width: 150%;
+          position: absolute;
+          top: 0px;
+          left: -43px;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,102 @@
+@import "./_variables.import.less";
+
+#calc {
+  width: 180px;
+  padding: 0 10px;
+  margin: 0 auto;
+  h3 {
+    width: 140px;
+    height: 32px;
+    line-height: 32px;
+    font-size: 16px;
+    padding: 0 0 4px;
+    margin: 0 auto 4px;
+    border-bottom: 1px solid #ddd;
+    letter-spacing: 1px;
+    text-align: center;
+    color: @black;
+  }
+  > div {
+    padding: 10px;
+    margin: 10px auto 15px;
+    background-color: #fafafa;
+    box-shadow: rgba(0, 0, 0, 0.117647) 0px 1px 6px, rgba(0, 0, 0, 0.117647) 0px 1px 4px;
+    color: @black;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    box-sizing: border-box;
+    tr {
+      td {
+        height: 26px;
+        line-height: 26px;
+        padding: 2px 4px;
+        font-size: 16px;
+
+        &.td-head {
+          padding: 2px 18px 2px 10px;
+        }
+        &.td-name {
+          width: 80px;
+          padding: 2px 0 2px 10px;
+        }
+        &.td-ttlscore {
+          width: 34px;
+          padding: 2px 2px 2px 8px;
+          text-align: right;
+        }
+        img {
+          width: 26px;
+          height: 26px;
+          display: block;
+        }
+        span {
+          font-size: 14px;
+          color: #c9c9c9;
+        }
+      }
+    }
+  }
+  #calc-ttl {
+
+  }
+
+  #calc-last {
+    position: relative;
+    p {
+      text-align: center;
+      font-size: 14px;
+      color: #aaa;
+    }
+    table {
+      margin-top: 6px;
+      tr.calc-row.last {
+        &:before {
+          content: '';
+          width: 140px;
+          height: 1px;
+          display: block;
+          position: absolute;
+          bottom: 40px;
+          left: 20px;
+          background-color: #ddd;
+        }
+        td {
+          &.td-name {
+            width: 89px;
+            font-size: 14px;
+          }
+          &.td-ttlscore {
+            width: 24px;
+            padding: 2px 2px 2px 4px;
+          }
+        }
+      }
+    }
+  }
+
+  #calc-board {
+    margin: 0;
+  }
+}

@@ -1,0 +1,81 @@
+@import "./_variables.import.less";
+
+* {
+  padding: 0;
+  margin: 0;
+  text-decoration: none;
+  font-family: @font-family;
+}
+
+// 保持不變色
+a, a:visited, a:hover, a:active {
+  color: inherit;
+}
+
+.cube {
+  width: 30px;
+  height: 30px;
+  position: relative;
+  display: inline-block;
+  font-size: 16px;
+  &:before {
+    content: '';
+    width: 2px;
+    height: 30px;
+    position: absolute;
+    top: 0;
+    left: 14px;
+    background-color: rgba(51, 51, 51, .4);
+    z-index: -5;
+  }
+  &:after {
+    content: '';
+    width: 30px;
+    height: 2px;
+    position: absolute;
+    top: 14px;
+    left: 0;
+    background-color: rgba(51, 51, 51, .4);
+    z-index: -5;
+  }
+  &.lastStepDots {
+    background-color: rgba(158, 158, 158, .5);
+  }
+  &.cube-left:after {
+    width: 15px;
+    left: 15px;
+  }
+  &.cube-right:after {
+    width: 15px;
+    right: 15px;
+  }
+  &.cube-top:before {
+    height: 15px;
+    top: 15px;
+  }
+  &.cube-bottom:before {
+    height: 15px;
+    bottom: 15px;
+  }
+  .gem {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    img {
+      width: 100%;
+      display: block;
+    }
+  }
+}
+
+.cube.shooting {
+  cursor: crosshair;
+  .gem {
+    cursor: crosshair;
+    img {
+      cursor: crosshair;
+    }
+  }
+}
