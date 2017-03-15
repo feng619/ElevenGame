@@ -16,7 +16,7 @@ export default class GameInfo extends Component {
             <div className={'gem '+colorClass[cv]}>
               {
                 cv != 0
-                ? <img src={`/pics/${scene=='king'?'k':'p'}${cv}.png`} />
+                ? <img src={`/pics/${scene=='king'?'k':(scene=='pirate'?'p':(scene=='forest'?'f':'a'))}${cv}.png`} />
                 : null
               }
             </div>
@@ -30,7 +30,7 @@ export default class GameInfo extends Component {
             <div className={'gem '+colorClass[cv]}>
               {
                 cv != 0
-                ? <img src={`/pics/${scene=='king'?'k':'p'}${cv}.png`} />
+                ? <img src={`/pics/${scene=='king'?'k':(scene=='pirate'?'p':(scene=='forest'?'f':'a'))}${cv}.png`} />
                 : null
               }
             </div>
@@ -152,7 +152,7 @@ export default class GameInfo extends Component {
   }
 
   render() {
-    const { _id, name, kyu, players, playersOnOff, role, scoreInfo, flashdots, skill, scene, mode, gameover } = this.props.eleven;
+    const { _id, name, kyu, players, playersOnOff, role, scoreInfo, flashdots, skill, scene, mode, gameover, vsComputer } = this.props.eleven;
     const btnStyle = {width: '70px', height: '70px'};
     const iconStyle = {width: '100%'};
 
@@ -199,14 +199,24 @@ export default class GameInfo extends Component {
           <div className='players-row'>
             <div className='img-box'>
               {
-                role[1]
-                ? (
-                  <img src={`/pics/eleven-role${playersOnOff[1]?'':'-grey'}-0${role[1]=='WAR'?'1':(role[1]=='HUT'?'2':'3')}.png`} />
+                vsComputer == 'Faker'
+                ? null
+                : (
+                  role[1]
+                  ? (
+                    <img src={`/pics/eleven-role${playersOnOff[1]?'':'-grey'}-0${role[1]=='WAR'?'1':(role[1]=='HUT'?'2':'3')}.png`} />
+                  )
+                  : null // waiting 的情況不用 icon
                 )
-                : null // waiting 的情況不用 icon
               }
             </div>
-            <div>{role[1] ? players[1] : '等待中'}</div>
+            <div>
+              {
+                vsComputer == 'Faker'
+                ? 'Faker(C)'
+                : ( role[1] ? players[1] : '等待中' )
+              }
+            </div>
             <div className='img-box right'>{ who==1 && !gameover?<img src='/pics/loading_dots.gif' />:null }</div>
           </div>
         </div>

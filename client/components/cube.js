@@ -5,8 +5,54 @@ export default class Cube extends Component {
     super(props);
   }
 
-  defineCubeClass() {
-    const { yoko, tate, eleven: { _id, kyu, gameover, pattern, lastStepDots, breakOnOff } } = this.props;
+  componentDidMount() {
+    const { eleven: { scene } } = this.props;
+    // 依場景更改網格的顏色
+    var sheet = document.styleSheets[0]; // get style sheet somehow
+    var rules = sheet.rules;
+    if( scene == 'king' ) {
+      sheet.insertRule('.cube:before { background-color: rgba(145, 123, 83, .2); }', rules.length);
+      sheet.insertRule('.cube:after  { background-color: rgba(145, 123, 83, .2); }', rules.length);
+    }
+    if( scene == 'pirate' ) {
+      sheet.insertRule('.cube:before { background-color: rgba(77, 139, 154, .2); }', rules.length);
+      sheet.insertRule('.cube:after  { background-color: rgba(77, 139, 154, .2); }', rules.length);
+    }
+    if( scene == 'forest' ) {
+      sheet.insertRule('#game-board-main { background-color: rgba(97, 131, 61, 0.05); }', rules.length);
+      sheet.insertRule('#kyu .cube { background-color: rgba(97, 131, 61, 0.05); }', rules.length);
+      sheet.insertRule('.cube:before { background-color: rgba(255,255,255,.2); }', rules.length);
+      sheet.insertRule('.cube:after  { background-color: rgba(255,255,255,.2); }', rules.length);
+      sheet.insertRule('#kyu .cube:before { background-color: #fff; }', rules.length);
+      sheet.insertRule('#kyu .cube:after  { background-color: #fff; }', rules.length);
+    }
+    if( scene == 'alchemy' ) {
+      sheet.insertRule('.cube:before { background-color: rgba(176, 93, 44, .2); }', rules.length);
+      sheet.insertRule('.cube:after  { background-color: rgba(176, 93, 44, .2); }', rules.length);
+
+      for(let x=2; x<=4; x++) {
+        for(let y=4; y<=19; y++) { this.alchemy_bgc( sheet, rules, x, y ) }
+      }
+      for(let x=6; x<=8; x++) {
+        for(let y=0; y<=12; y++) { this.alchemy_bgc( sheet, rules, x, y ) }
+      }
+      for(let x=11; x<=13; x++) {
+        for(let y=7; y<=19; y++) { this.alchemy_bgc( sheet, rules, x, y ) }
+      }
+      for(let x=15; x<=17; x++) {
+        for(let y=0; y<=15; y++) { this.alchemy_bgc( sheet, rules, x, y ) }
+      }
+    }
+  }
+
+  alchemy_bgc( sheet, rules, x, y ) {
+    sheet.insertRule(`.cube.x${x}y${y} { background-color: rgba(176, 93, 44, .2); }`, rules.length);
+    sheet.insertRule(`.cube.x${x}y${y}:before { background-color: rgba(176, 93, 44, 0); }`, rules.length);
+    sheet.insertRule(`.cube.x${x}y${y}:after  { background-color: rgba(176, 93, 44, 0); }`, rules.length);
+  }
+
+  defineCubeClass( who, ppl ) {
+    const { yoko, tate, eleven: { _id, kyu, gameover, pattern, lastStepDots, breakOnOff, fungi } } = this.props;
     const colorClass = [ '', 'white', 'green', 'blue', 'purple', 'golden' ];
     let cubeClass = 'cube '+'x'+tate+'y'+yoko+' ';
     // 基本線格
@@ -15,11 +61,16 @@ export default class Cube extends Component {
     if( yoko === 0 ) cubeClass+=' cube-top ';
     if( yoko === 19 ) cubeClass+=' cube-bottom ';
     if( pattern[yoko][tate] !=0 ) cubeClass+=colorClass[pattern[yoko][tate]];
-    if( breakOnOff == 'on' ) cubeClass+=' shooting ';
+    if( breakOnOff == 'on' && who == ppl ) cubeClass+=' shooting ';
 
     // 處理上一步驟的灰底提示
     lastStepDots.map(cv => {
       if( tate==cv[0] && yoko==cv[1] ) cubeClass+=' lastStepDots ';
+    });
+
+    // 處理生長香菇的綠底提示
+    fungi.map(cv => {
+      if( tate==cv[0] && yoko==cv[1] ) cubeClass+=' fungi ';
     });
 
     return cubeClass;
@@ -44,7 +95,7 @@ export default class Cube extends Component {
       Meteor.call('eleven.breakSwitch', _id, 'off');
       return;
     }
-    
+
     if( tate==0 || tate==19 || yoko==0 || yoko==19 ) return; // 邊框不能填子
 
     // 已經有子的地方 不能再填子
@@ -186,6 +237,7 @@ export default class Cube extends Component {
     // 往左下/右下方找
     origin.map(cv => {
       let x = cv[0], y = cv[1];
+      count = [];
       while( (direction=='left_top'?x<=19:0<=x) && y<=19 ) {
         if( pattern[y][x] !=0 ) {
           count.push([x,y]);
@@ -198,6 +250,7 @@ export default class Cube extends Component {
         x = (direction=='left_top'?x+1:x-1); y++;
       }
     })
+
     return multicount;
   }
 
@@ -298,19 +351,20 @@ export default class Cube extends Component {
     let who = (scoreInfo.length)%2; // 現在輪到 玩家一(0) 還是 玩家二(1)
     let flashing = flashdots.length == 0 ? false : true;
 
-    if( flashing ) { // 有一些子 需要添加閃動特效
+    let gemClass = 'gem ';
+    if( pattern[yoko][tate] !=0 ) gemClass += colorClass[pattern[yoko][tate]];
+
+    if( flashing ) { // 需要添加閃動特效嗎？
       flashdots.map(cv => {
-        document.querySelector(`.x${cv[0]}y${cv[1]}`).querySelector('.gem').classList.add("sparkling");
+        // document.querySelector(`.x${cv[0]}y${cv[1]}`).querySelector('.gem').classList.add("sparkling");
+        // 不能用上面這行, 不然香菇如果剛好長在消除連線的上面 閃爍特效結束後 新生長的香菇會繼續閃爍
+        if( tate==cv[0] && yoko==cv[1] ) gemClass += ' sparkling ';
       })
     }
 
-
-    let gemClass = 'gem ';
-    if( pattern[yoko][tate] !=0 ) gemClass+=colorClass[pattern[yoko][tate]];
-
     return (
       <div
-        className={this.defineCubeClass()}
+        className={this.defineCubeClass( who, ppl )}
         onClick={this.putDot.bind(this, who, ppl, skill, flashing, scene)}
         onMouseEnter={this.handleMouseOver.bind(this, who, ppl, flashing)}
         onMouseLeave={this.handleMouseOut.bind(this, who, ppl)}
@@ -318,7 +372,7 @@ export default class Cube extends Component {
         <div className={gemClass}>
           {
             pattern[yoko][tate] != 0
-            ? <img src={`/pics/${scene=='king'?'k':'p'}${pattern[yoko][tate]}.png`} />
+            ? <img src={`/pics/${scene=='king'?'k':(scene=='pirate'?'p':(scene=='forest'?'f':'a'))}${pattern[yoko][tate]}.png`} />
             : null
           }
         </div>

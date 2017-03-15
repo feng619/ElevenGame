@@ -1,16 +1,10 @@
-
-
-
-
-
-
 import React, { Component } from 'react';
 
 
 export default class GameCalc extends Component {
 
   createScore() {
-    const { _id, scoreInfo, players, playersOnOff, flashdots, mode, scene, gameover } = this.props.eleven;
+    const { _id, scoreInfo, players, playersOnOff, flashdots, mode, scene, gameover, vsComputer } = this.props.eleven;
 
     let ppl;
     if( !Meteor.user() ) { // 現在進來的人是 玩家一 玩家二 還是其他人（包含有登入或沒登入）
@@ -38,11 +32,11 @@ export default class GameCalc extends Component {
     let lastArr = [], lastTotlePoints = 0;
     if( ppl != 'other' ) {
       let cd = last.colorDots, rj = last.renju;
-      if( cd.green )  lastArr.push( <tr key='0'><td className='td-head'><img src={`/pics/${scene=='king'?'k':'p'}2.png`} /></td><td>{cd.green}</td><td><span>個 &times; 0.5 分</span></td></tr> );
-      if( cd.blue )   lastArr.push( <tr key='1'><td className='td-head'><img src={`/pics/${scene=='king'?'k':'p'}3.png`} /></td><td>{cd.blue}</td><td><span>個 &times; 1 分</span></td></tr> );
-      if( cd.purple ) lastArr.push( <tr key='2'><td className='td-head'><img src={`/pics/${scene=='king'?'k':'p'}4.png`} /></td><td>{cd.purple}</td><td><span>個 &times; 1.5 分</span></td></tr> );
-      if( cd.golden ) lastArr.push( <tr key='3'><td className='td-head'><img src={`/pics/${scene=='king'?'k':'p'}5.png`} /></td><td>{cd.golden}</td><td><span>個 &times; 2 分</span></td></tr> );
-      if( cd.skull )  lastArr.push( <tr key='s'><td className='td-head'><img src={`/pics/p6.png`} /></td><td style={{color: '#F44336'}}>{cd.skull}</td><td><span>個 &times; -2 分</span></td></tr> );
+      if( cd.green )  lastArr.push( <tr key='0'><td className='td-head'><img src={`/pics/${scene=='king'?'k':(scene=='pirate'?'p':(scene=='forest'?'f':'a'))}2.png`} /></td><td>{cd.green}</td><td><span>個 &times; 0.5 分</span></td></tr> );
+      if( cd.blue )   lastArr.push( <tr key='1'><td className='td-head'><img src={`/pics/${scene=='king'?'k':(scene=='pirate'?'p':(scene=='forest'?'f':'a'))}3.png`} /></td><td>{cd.blue}</td><td><span>個 &times; 1 分</span></td></tr> );
+      if( cd.purple ) lastArr.push( <tr key='2'><td className='td-head'><img src={`/pics/${scene=='king'?'k':(scene=='pirate'?'p':(scene=='forest'?'f':'a'))}4.png`} /></td><td>{cd.purple}</td><td><span>個 &times; 1.5 分</span></td></tr> );
+      if( cd.golden ) lastArr.push( <tr key='3'><td className='td-head'><img src={`/pics/${scene=='king'?'k':(scene=='pirate'?'p':(scene=='forest'?'f':'a'))}5.png`} /></td><td>{cd.golden}</td><td><span>個 &times; 2 分</span></td></tr> );
+      if( cd.skull )  lastArr.push( <tr key='s'><td className='td-head'><img src={`/pics/${scene=='pirate'?'p':'f'}6.png`} /></td><td style={{color: '#F44336'}}>{cd.skull}</td><td><span>個 &times; -2 分</span></td></tr> );
       if( rj.r6 )     lastArr.push( <tr key='4'><td className='td-head'>連六</td><td>{rj.r6}</td><td><span>個 &times; 1 分</span></td></tr> );
       if( rj.r7 )     lastArr.push( <tr key='5'><td className='td-head'>連七</td><td>{rj.r7}</td><td><span>個 &times; 3 分</span></td></tr> );
       if( rj.r8 )     lastArr.push( <tr key='6'><td className='td-head'>連八</td><td>{rj.r8}</td><td><span>個 &times; 5 分</span></td></tr> );
@@ -117,7 +111,13 @@ export default class GameCalc extends Component {
                 <td><span> 分</span></td>
               </tr>
               <tr className='calc-row'>
-                <td className='td-name'>{players[1] ? players[1] : '等待中'}</td>
+                <td className='td-name'>
+                  {
+                    vsComputer == 'Faker'
+                    ? 'Faker(C)'
+                    : ( players[1] ? players[1] : '等待中' )
+                  }
+                </td>
                 <td className='td-ttlscore' style={{color: mode=='classic' && ttl_score_1>9?'#F44336':'#424242'}}>
                   { ttl_score_1 }
                 </td>
@@ -161,62 +161,62 @@ export default class GameCalc extends Component {
               <h3>我的計分表</h3>
               <table>
                 <tbody>
-                  <tr>
-                    <td className='td-head'><img src={`/pics/${scene=='king'?'k':'p'}2.png`} /></td>
+                  <tr className={ ppl==0 ? (ttl_0.green?'':'mild') : (ttl_1.green?'':'mild') }>
+                    <td className='td-head'><img src={`/pics/${scene=='king'?'k':(scene=='pirate'?'p':(scene=='forest'?'f':'a'))}2.png`} /></td>
                     <td>{ ppl==0 ? ttl_0.green : ttl_1.green }</td>
                     <td><span>個 &times; 0.5 分</span></td>
                   </tr>
-                  <tr>
-                    <td className='td-head'><img src={`/pics/${scene=='king'?'k':'p'}3.png`} /></td>
+                  <tr className={ ppl==0 ? (ttl_0.blue?'':'mild') : (ttl_1.blue?'':'mild') }>
+                    <td className='td-head'><img src={`/pics/${scene=='king'?'k':(scene=='pirate'?'p':(scene=='forest'?'f':'a'))}3.png`} /></td>
                     <td>{ ppl==0 ? ttl_0.blue : ttl_1.blue }</td>
                     <td><span>個 &times; 1 分</span></td>
                   </tr>
-                  <tr>
-                    <td className='td-head'><img src={`/pics/${scene=='king'?'k':'p'}4.png`} /></td>
+                  <tr className={ ppl==0 ? (ttl_0.purple?'':'mild') : (ttl_1.purple?'':'mild') }>
+                    <td className='td-head'><img src={`/pics/${scene=='king'?'k':(scene=='pirate'?'p':(scene=='forest'?'f':'a'))}4.png`} /></td>
                     <td>{ ppl==0 ? ttl_0.purple : ttl_1.purple }</td>
                     <td><span>個 &times; 1.5 分</span></td>
                   </tr>
-                  <tr>
-                    <td className='td-head'><img src={`/pics/${scene=='king'?'k':'p'}5.png`} /></td>
+                  <tr className={ ppl==0 ? (ttl_0.golden?'':'mild') : (ttl_1.golden?'':'mild') }>
+                    <td className='td-head'><img src={`/pics/${scene=='king'?'k':(scene=='pirate'?'p':(scene=='forest'?'f':'a'))}5.png`} /></td>
                     <td>{ ppl==0 ? ttl_0.golden : ttl_1.golden }</td>
                     <td><span>個 &times; 2 分</span></td>
                   </tr>
                   {
-                    scene == 'pirate'
+                    scene == 'pirate' || scene == 'forest'
                     ? (
-                      <tr>
-                        <td className='td-head'><img src='/pics/p6.png' /></td>
+                      <tr className={ ppl==0 ? (ttl_0.skull?'':'mild') : (ttl_1.skull?'':'mild') }>
+                        <td className='td-head'><img src={`/pics/${scene=='pirate'?'p':'f'}6.png`} /></td>
                         <td style={{color: '#F44336'}}>{ ppl==0 ? ttl_0.skull : ttl_1.skull }</td>
                         <td><span>個 &times; -2 分</span></td>
                       </tr>
                     ) : null
                   }
-                  <tr>
+                  <tr className={ ppl==0 ? (ttl_0.r6?'':'mild') : (ttl_1.r6?'':'mild') }>
                     <td className='td-head'>連六</td>
                     <td>{ ppl==0 ? ttl_0.r6 : ttl_1.r6 }</td>
                     <td><span>個 &times; 1 分</span></td>
                   </tr>
-                  <tr>
+                  <tr className={ ppl==0 ? (ttl_0.r7?'':'mild') : (ttl_1.r7?'':'mild') }>
                     <td className='td-head'>連七</td>
                     <td>{ ppl==0 ? ttl_0.r7 : ttl_1.r7 }</td>
                     <td><span>個 &times; 3 分</span></td>
                   </tr>
-                  <tr>
+                  <tr className={ ppl==0 ? (ttl_0.r8?'':'mild') : (ttl_1.r8?'':'mild') }>
                     <td className='td-head'>連八</td>
                     <td>{ ppl==0 ? ttl_0.r8 : ttl_1.r8 }</td>
                     <td><span>個 &times; 5 分</span></td>
                   </tr>
-                  <tr>
+                  <tr className={ ppl==0 ? (ttl_0.r9?'':'mild') : (ttl_1.r9?'':'mild') }>
                     <td className='td-head'>連九</td>
                     <td>{ ppl==0 ? ttl_0.r9 : ttl_1.r9 }</td>
                     <td><span>個 &times; 7 分</span></td>
                   </tr>
-                  <tr>
+                  <tr className={ ppl==0 ? (ttl_0.r10?'':'mild') : (ttl_1.r10?'':'mild') }>
                     <td className='td-head'>連十</td>
                     <td>{ ppl==0 ? ttl_0.r10 : ttl_1.r10 }</td>
                     <td><span>個 &times; 9 分</span></td>
                   </tr>
-                  <tr>
+                  <tr className={ ppl==0 ? (ttl_0.r11?'':'mild') : (ttl_1.r11?'':'mild') }>
                     <td className='td-head'>光棍</td>
                     <td>{ ppl==0 ? ttl_0.r11 : ttl_1.r11 }</td>
                     <td><span>個 &times; 11 分</span></td>

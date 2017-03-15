@@ -36,82 +36,142 @@ class Landing extends Component {
     }
   }
 
-  createEntries( _id, players, playersOnOff, role, url, btnStyle, iconStyle, gameover, _0or1 ) {
+  createEntries( _id, players, playersOnOff, role, url, btnStyle, iconStyle, gameover, vsComputer, _0or1 ) {
     // 決定 icon image src
     const icon_src=`/pics/eleven-role${playersOnOff[_0or1]?'':'-grey'}-0${role[_0or1]=='WAR'?'1':(role[_0or1]=='HUT'?'2':'3')}.png`;
 
-    return (
-      <div className='entries-box'>
-        { // 先手後手的按鈕：如果你已經按了先手 那就要看不到後手的按鈕
-          Meteor.user() && (Meteor.user().username == players[ +!_0or1 ])
-          ? (
-            players[ _0or1 ]
+    if( vsComputer == 'Faker' ) {
+      return (
+        <div className='entries-box'>
+          {
+            _0or1
+            ? 'Faker（電腦）' // 1 永遠是電腦  0 要另外處理
+            : ( // 有人按了之後 這裡就要替換成按的人名, 沒按的話 就可以選職業
+              !players[ _0or1 ]
+              ? (
+                <div className='roles-row'>
+
+                  <IconButton href={url} tooltip="戰士" iconStyle={iconStyle} style={btnStyle}
+                    onClick={this.addPlayer.bind(this, _id, _0or1, 'WAR')}
+                    >
+                    <img src='/pics/eleven-role-01.png'/>
+                  </IconButton>
+
+                  <IconButton href={url} tooltip="獵人" iconStyle={iconStyle} style={btnStyle}
+                    onClick={this.addPlayer.bind(this, _id, _0or1, 'HUT')}
+                    >
+                    <img src='/pics/eleven-role-02.png'/>
+                  </IconButton>
+
+                  <IconButton href={url} tooltip="法師" iconStyle={iconStyle} style={btnStyle}
+                    onClick={this.addPlayer.bind(this, _id, _0or1, 'MAG')}
+                    >
+                    <img src='/pics/eleven-role-03.png'/>
+                  </IconButton>
+
+                </div>
+              )
+              : (
+                <div className='entries-row'>
+                  <div className='img-box'><img src={icon_src} /></div>
+                  <div className='name-box'>{players[ _0or1 ]}</div>
+
+                  { // 繼續的按鈕：必須是綁住這個遊戲的玩家 才可以繼續玩
+                    Meteor.user() && (Meteor.user().username == players[_0or1])
+                    ? (
+                      <IconButton href={url} tooltip={gameover?'觀看':'繼續'} iconStyle={iconStyle} style={btnStyle}
+                        onClick={this.playerOn.bind(this, _id, _0or1)}
+                        >
+                        { // 如果遊戲結束 就放觀看的眼睛圖案 不然就放繼續的按鈕
+                          gameover
+                          ? <img src='/pics/eleven-role-04.png'/>
+                          : <img src='/pics/eleven-role-06.png'/>
+                        }
+                      </IconButton>
+                    )
+                    : null
+                  }
+                </div>
+              )
+            )
+          }
+        </div>
+      )
+
+    } else {
+      return (
+        <div className='entries-box'>
+          { // 先手後手的按鈕：如果你已經按了先手 那就要看不到後手的按鈕
+            Meteor.user() && (Meteor.user().username == players[ +!_0or1 ])
             ? (
-              <div className='entries-row'>
-                <div className='img-box'><img src={icon_src} /></div>
-                <div className='name-box'>{players[ _0or1 ]}</div>
-              </div>
+              players[ _0or1 ]
+              ? (
+                <div className='entries-row'>
+                  <div className='img-box'><img src={icon_src} /></div>
+                  <div className='name-box'>{players[ _0or1 ]}</div>
+                </div>
+              )
+              : '等待中...'
             )
-            : '等待中...'
-          )
-          : ( // 有人按了之後 這裡就要替換成按的人名, 沒按的話 就可以選職業
-            !players[_0or1]
-            ? (
-              <div className='roles-row'>
+            : ( // 有人按了之後 這裡就要替換成按的人名, 沒按的話 就可以選職業
+              !players[_0or1]
+              ? (
+                <div className='roles-row'>
 
-                <IconButton href={url} tooltip="戰士" iconStyle={iconStyle} style={btnStyle}
-                  onClick={this.addPlayer.bind(this, _id, _0or1, 'WAR')}
-                  >
-                  <img src='/pics/eleven-role-01.png'/>
-                </IconButton>
+                  <IconButton href={url} tooltip="戰士" iconStyle={iconStyle} style={btnStyle}
+                    onClick={this.addPlayer.bind(this, _id, _0or1, 'WAR')}
+                    >
+                    <img src='/pics/eleven-role-01.png'/>
+                  </IconButton>
 
-                <IconButton href={url} tooltip="獵人" iconStyle={iconStyle} style={btnStyle}
-                  onClick={this.addPlayer.bind(this, _id, _0or1, 'HUT')}
-                  >
-                  <img src='/pics/eleven-role-02.png'/>
-                </IconButton>
+                  <IconButton href={url} tooltip="獵人" iconStyle={iconStyle} style={btnStyle}
+                    onClick={this.addPlayer.bind(this, _id, _0or1, 'HUT')}
+                    >
+                    <img src='/pics/eleven-role-02.png'/>
+                  </IconButton>
 
-                <IconButton href={url} tooltip="法師" iconStyle={iconStyle} style={btnStyle}
-                  onClick={this.addPlayer.bind(this, _id, _0or1, 'MAG')}
-                  >
-                  <img src='/pics/eleven-role-03.png'/>
-                </IconButton>
+                  <IconButton href={url} tooltip="法師" iconStyle={iconStyle} style={btnStyle}
+                    onClick={this.addPlayer.bind(this, _id, _0or1, 'MAG')}
+                    >
+                    <img src='/pics/eleven-role-03.png'/>
+                  </IconButton>
 
-              </div>
+                </div>
+              )
+              : (
+                <div className='entries-row'>
+                  <div className='img-box'><img src={icon_src} /></div>
+                  <div className='name-box'>{players[ _0or1 ]}</div>
+
+                  { // 繼續的按鈕：必須是綁住這個遊戲的玩家 才可以繼續玩
+                    Meteor.user() && (Meteor.user().username == players[_0or1])
+                    ? (
+                      <IconButton href={url} tooltip={gameover?'觀看':'繼續'} iconStyle={iconStyle} style={btnStyle}
+                        onClick={this.playerOn.bind(this, _id, _0or1)}
+                        >
+                        { // 如果遊戲結束 就放觀看的眼睛圖案 不然就放繼續的按鈕
+                          gameover
+                          ? <img src='/pics/eleven-role-04.png'/>
+                          : <img src='/pics/eleven-role-06.png'/>
+                        }
+                      </IconButton>
+                    )
+                    : null
+                  }
+                </div>
+              )
             )
-            : (
-              <div className='entries-row'>
-                <div className='img-box'><img src={icon_src} /></div>
-                <div className='name-box'>{players[ _0or1 ]}</div>
-
-                { // 繼續的按鈕：必須是綁住這個遊戲的玩家 才可以繼續玩
-                  Meteor.user() && (Meteor.user().username == players[_0or1])
-                  ? (
-                    <IconButton href={url} tooltip={gameover?'觀看':'繼續'} iconStyle={iconStyle} style={btnStyle}
-                      onClick={this.playerOn.bind(this, _id, _0or1)}
-                      >
-                      { // 如果遊戲結束 就放觀看的眼睛圖案 不然就放繼續的按鈕
-                        gameover
-                        ? <img src='/pics/eleven-role-04.png'/>
-                        : <img src='/pics/eleven-role-06.png'/>
-                      }
-                    </IconButton>
-                  )
-                  : null
-                }
-              </div>
-            )
-          )
-        }
+          }
+        </div>
+      )
+    } // end of if else
 
 
-      </div>
-    )
   }
 
   createLists() {
     return this.props.eleven.reverse().map( (cv, i, arr) => {
-      const { _id, name, gameover, createdAt, players, playersOnOff, role, mode, scene } = cv;
+      const { _id, name, gameover, createdAt, players, playersOnOff, role, mode, scene, vsComputer } = cv;
       const url = `/games/${_id}`;
       const btnStyle = {width: '70px', height: '70px'};
       const iconStyle = {width: '100%'};
@@ -122,15 +182,15 @@ class Landing extends Component {
           <td>{name}</td>
           <td>{moment(createdAt).format('MM/DD HH:mm')}</td>
           <td>
-            <div className='lists-badge' style={{backgroundColor: (scene=='king'?'#917b53':'#4d8b9a')}}>
+            <div className='lists-badge' style={{backgroundColor: (scene=='king'?'#917b53':(scene=='pirate'?'#4d8b9a':(scene=='forest'?'#61833d':'#b05d2c')))}}>
               <img src={mode=='classic'?'/pics/mode-1.png':'/pics/mode-2.png'} />
             </div>
           </td>
           <td>
-            { this.createEntries( _id, players, playersOnOff, role, url, btnStyle, iconStyle, gameover, 0 ) }
+            { this.createEntries( _id, players, playersOnOff, role, url, btnStyle, iconStyle, gameover, vsComputer, 0 ) }
           </td>
           <td>
-            { this.createEntries( _id, players, playersOnOff, role, url, btnStyle, iconStyle, gameover, 1 ) }
+            { this.createEntries( _id, players, playersOnOff, role, url, btnStyle, iconStyle, gameover, vsComputer, 1 ) }
           </td>
           <td>
             <IconButton href={url} tooltip="觀戰" iconStyle={iconStyle} style={btnStyle}>
@@ -151,7 +211,7 @@ class Landing extends Component {
         <div id='about-outer'>
           <div id='about'>
             <h2>兩人對戰策略棋類遊戲</h2>
-            <h2><span>2</span> 種場景 <span className='grey'>&times;</span> <span>2</span> 種模式 <span className='grey'>&times;</span> <span>3</span> 種職業</h2>
+            <h2><span>4</span> 種場景 <span className='grey'>&times;</span> <span>2</span> 種模式 <span className='grey'>&times;</span> <span>3</span> 種職業</h2>
           </div>
         </div>
 

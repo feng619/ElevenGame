@@ -2,8 +2,8 @@
 @import "./_common.import.less";
 
 #game {
-  width: 1120px;
-  height: 700px;
+  width: 1140px;
+  height: 710px;
   font-size: 0;
   margin: 10px auto;
   padding: 5px 0 0;
@@ -11,8 +11,8 @@
   background-color: #f5f5f5;
 
   #game-info {
-    width: 230px;
-    height: 700px;
+    width: 240px;
+    height: 710px;
     display: inline-block;
     vertical-align: top;
     font-size: 16px;
@@ -20,7 +20,7 @@
 
   #game-board {
     width: 660px;
-    height: 700px;
+    height: 710px;
     position: relative;
     display: inline-block;
     vertical-align: top;
@@ -37,12 +37,12 @@
         font-size: 12px;
         line-height: 30px;
         text-align: center;
-        color: #ccc;
+        color: #ddd;
       }
     }
     .game-board-title {
       width: 660px;
-      height: 50px;
+      height: 60px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -101,6 +101,109 @@
             }
           }
         }
+        .alchemy-sliders {
+          width: 90px;
+          position: absolute;
+          background-color: rgba(176, 93, 44, .2);
+          overflow: hidden;
+          #sliderGradient(@direction, @antiDerection) {
+            background: -webkit-linear-gradient(@direction, transparent 20%, rgba(255,255,255,.4) 40%, rgba(255,255,255,.6) 48%, transparent 50%); /* For Safari 5.1 to 6.0 */
+            background: -o-linear-gradient(@antiDerection, transparent 20%, rgba(255,255,255,.4) 40%, rgba(255,255,255,.6) 48%, transparent 50%); /* For Opera 11.1 to 12.0 */
+            background: -moz-linear-gradient(@antiDerection, transparent 20%, rgba(255,255,255,.4) 40%, rgba(255,255,255,.6) 48%, transparent 50%); /* For Firefox 3.6 to 15 */
+            background: linear-gradient(to @antiDerection, transparent 20%, rgba(255,255,255,.4) 40%, rgba(255,255,255,.6) 48%, transparent 50%); /* Standard syntax */
+          }
+          &:before, &:after {
+            content: '';
+            width: 45px;
+            height: 30px;
+            display: block;
+            position: absolute;
+            z-index: 5;
+          }
+          &:before {
+            left: 0;
+          }
+          &:after {
+            right: 0;
+          }
+          &#slider1 {
+            height: 480px;
+            bottom: 0;
+            left: 60px;
+          }
+          &#slider2 {
+            height: 390px;
+            left: 180px;
+          }
+          &#slider3 {
+            height: 390px;
+            bottom: 0;
+            right: 180px;
+          }
+          &#slider4 {
+            height: 480px;
+            top: 0;
+            right: 60px;
+          }
+          &#slider1:before, &#slider1:after, &#slider3:before, &#slider3:after {
+            top: -30px;
+          }
+          &#slider2:before, &#slider2:after, &#slider4:before, &#slider4:after {
+            bottom: -30px;
+          }
+
+          &#slider1:before, &#slider3:before {
+            #sliderGradient(top right, left bottom )
+          }
+          &#slider1:after, &#slider3:after {
+            #sliderGradient(left top, bottom right )
+          }
+          &#slider2:after, &#slider4:after {
+            #sliderGradient(left bottom, top right )
+          }
+          &#slider2:before, &#slider4:before {
+            #sliderGradient(bottom right, left top )
+          }
+
+          &#slider1:before, &#slider1:after {
+            -webkit-animation: arrowSlide1 30s linear infinite;
+            animation: arrowSlide1 30s linear infinite;
+          }
+          &#slider2:before, &#slider2:after {
+            -webkit-animation: arrowSlide2 30s linear infinite;
+            animation: arrowSlide2 30s linear infinite;
+          }
+          &#slider3:before, &#slider3:after {
+            -webkit-animation: arrowSlide3 30s linear infinite;
+            animation: arrowSlide3 30s linear infinite;
+          }
+          &#slider4:before, &#slider4:after {
+            -webkit-animation: arrowSlide4 30s linear infinite;
+            animation: arrowSlide4 30s linear infinite;
+          }
+          @keyframes arrowSlide1 {
+            from {top: -30px;}
+            20% {top: 480px;}
+            to {top: 480px;}
+          }
+          @keyframes arrowSlide2 {
+            from {bottom: -30px;}
+            50% {bottom: -30px;}
+            70% {bottom: 390px;}
+            to {bottom: 390px;}
+          }
+          @keyframes arrowSlide3 {
+            from {top: -30px;}
+            20% {top: 390px;}
+            to {top: 390px;}
+          }
+          @keyframes arrowSlide4 {
+            from {bottom: -30px;}
+            50% {bottom: -30px;}
+            70% {bottom: 480px;}
+            to {bottom: 480px;}
+          }
+        }
       }
       .game-board-col {
         width: 30px;
@@ -119,7 +222,7 @@
           font-size: 12px;
           line-height: 30px;
           text-align: center;
-          color: #ccc;
+          color: #ddd;
         }
       }
 
@@ -127,8 +230,8 @@
   }
 
   #game-calc {
-    width: 230px;
-    height: 700px;
+    width: 240px;
+    height: 710px;
     display: inline-block;
     vertical-align: top;
     margin: 0 auto;

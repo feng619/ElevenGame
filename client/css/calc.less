@@ -1,11 +1,11 @@
 @import "./_variables.import.less";
 
 #calc {
-  width: 180px;
+  width: 190px;
   padding: 0 10px;
   margin: 0 auto;
   h3 {
-    width: 140px;
+    width: 150px;
     height: 32px;
     line-height: 32px;
     font-size: 16px;
@@ -72,23 +72,26 @@
     table {
       margin-top: 6px;
       tr.calc-row.last {
+        display: block;
+        padding-top: 3px;
+        margin-top: 1px;
         &:before {
           content: '';
-          width: 140px;
+          width: 150px;
           height: 1px;
           display: block;
           position: absolute;
-          bottom: 40px;
+          bottom: 43px;
           left: 20px;
           background-color: #ddd;
         }
         td {
           &.td-name {
-            width: 89px;
+            width: 91px;
             font-size: 14px;
           }
           &.td-ttlscore {
-            width: 24px;
+            width: 30px;
             padding: 2px 2px 2px 4px;
           }
         }
@@ -98,5 +101,8 @@
 
   #calc-board {
     margin: 0;
+    tr.mild {
+      opacity: 0.3;
+    }
   }
 }

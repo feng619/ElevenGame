@@ -43,6 +43,7 @@ export default class GameBoard extends Component {
   render() {
     const { eleven: { _id, kyu, playersOnOff, scoreInfo, scene, mode } } = this.props;
     const colorClass = [ '', 'white', 'green', 'blue', 'purple', 'golden' ];
+    const sceneColor = scene=='king'?'#917b53':(scene=='pirate'?'#4d8b9a':(scene=='forest'?'#61833d':'#b05d2c'));
 
     let ppl; // 現在進來的人是 玩家一 玩家二 還是其他人（包含有登入或沒登入）
     if( !Meteor.user() ) {
@@ -61,9 +62,9 @@ export default class GameBoard extends Component {
       <div id="game-board">
 
         <div className="game-board-row game-board-title">
-          <div className='game-board-title-el'>{scene=='king'?'國王陵墓':'海賊巢穴'}</div>
+          <div className='game-board-title-el'>{scene=='king'?'國王陵墓':(scene=='pirate'?'海賊巢穴':(scene=='forest'?'蘑菇森林':'煉金工坊'))}</div>
           <div className='game-board-title-el'>
-            <div className='lists-badge' style={{backgroundColor: (scene=='king'?'#917b53':'#4d8b9a')}}>
+            <div className='lists-badge' style={{backgroundColor: sceneColor}}>
               <img src={mode=='classic'?'/pics/mode-1.png':'/pics/mode-2.png'} />
             </div>
           </div>
@@ -85,7 +86,7 @@ export default class GameBoard extends Component {
                         <div className={'gem '+colorClass[cv]}>
                           {
                             cv != 0
-                            ? <img src={`/pics/${scene=='king'?'k':'p'}${cv}.png`} />
+                            ? <img src={`/pics/${scene=='king'?'k':(scene=='pirate'?'p':(scene=='forest'?'f':'a'))}${cv}.png`} />
                             : null
                           }
                         </div>
@@ -96,6 +97,18 @@ export default class GameBoard extends Component {
                 : null
               }
             </div>
+            {
+              scene == 'alchemy'
+              ? (
+                <div>
+                  <div id='slider1' className='alchemy-sliders'></div>
+                  <div id='slider2' className='alchemy-sliders'></div>
+                  <div id='slider3' className='alchemy-sliders'></div>
+                  <div id='slider4' className='alchemy-sliders'></div>
+                </div>
+              )
+              : null
+            }
             {this.createCubes()}
           </div>
           <div className="game-board-col game-board-col-right">

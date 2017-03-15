@@ -18,6 +18,7 @@ a, a:visited, a:hover, a:active {
   position: relative;
   display: inline-block;
   font-size: 16px;
+  z-index: 10;
   &:before {
     content: '';
     width: 2px;
@@ -25,7 +26,7 @@ a, a:visited, a:hover, a:active {
     position: absolute;
     top: 0;
     left: 14px;
-    background-color: rgba(51, 51, 51, .4);
+    //background-color: rgba(51, 51, 51, .2);
     z-index: -5;
   }
   &:after {
@@ -35,11 +36,18 @@ a, a:visited, a:hover, a:active {
     position: absolute;
     top: 14px;
     left: 0;
-    background-color: rgba(51, 51, 51, .4);
+    //background-color: rgba(51, 51, 51, .2);
     z-index: -5;
   }
   &.lastStepDots {
-    background-color: rgba(158, 158, 158, .5);
+    background: rgba(158, 158, 158, .5);
+  }
+  &.fungi {
+    background: rgba(97, 131, 61, .5);
+    background: -webkit-radial-gradient(rgba(97, 131, 61, .5) 40%, transparent 75%);
+    background: -o-radial-gradient(rgba(97, 131, 61, .5) 40%, transparent 75%);
+    background: -moz-radial-gradient(rgba(97, 131, 61, .5) 40%, transparent 75%);
+    background: radial-gradient(rgba(97, 131, 61, .5) 40%, transparent 75%);
   }
   &.cube-left:after {
     width: 15px;

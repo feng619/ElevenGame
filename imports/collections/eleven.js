@@ -1,4 +1,5 @@
-import { Mongo } from 'meteor/mongo';
+import { Mongo } from 'meteor/mongo'
+import { xyPoint } from '../startup/computerCalc'
 
 
 function shuffle(array) {
@@ -20,29 +21,9 @@ function init_pattern( mode, scene ) { // pattern 初始值製作
   // let pattern = [];
   // let initRow = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
   // for(let i=0; i<20; i++){ pattern.push(initRow) };
-  // 必須要用下面這個笨方法, 上面的不管用, 因為 pattern 被更改過後, 還是會得到一模一樣的 20 個 initRow
-  let pattern = [
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-  ];
+  // 必須要用下面這個方法, 不能讓 initRow 指向該陣列, 不然 pattern 被更改過後, 還是會得到一模一樣的 20 個 initRow
+  let pattern = [];
+  for(let i=0; i<20; i++){ pattern.push([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]) };
 
   // 死鬥模式專用 隨機初始值
   if( mode == 'deathBattle' ) {
@@ -52,7 +33,7 @@ function init_pattern( mode, scene ) { // pattern 初始值製作
     let centers = []; // 所有要描繪的九宮格的中心點座標
     for(let i=0; i<5; i++) {
       for(let j=0; j<5; j++) {
-        if( Math.random()>0.3 ) { // 先抓大概過半的機率 才放置中心點
+        if( Math.random()>0.2 ) { // 先抓大概過半的機率 才放置中心點
           centers.push([ init[0] + i*4, init[1] + j*4 ]);
         }
       }
@@ -79,7 +60,7 @@ function init_pattern( mode, scene ) { // pattern 初始值製作
 // 移除掉 insecure 之後就要用 methods ( $ meteor remove insecure )
 Meteor.methods({
   // 這裡不能用 fat arrow function, 否則 this 所指不同, this.userId 會找不到
-  'eleven.newgame': function( name, mode, scene ) {
+  'eleven.newgame': function( name, mode, scene, vsComputer ) {
     let pattern = init_pattern( mode, scene );
 
     return Eleven.insert({
@@ -99,7 +80,7 @@ Meteor.methods({
         renju: {'r6':0, 'r7':0, 'r8':0, 'r9':0, 'r10':0, 'r11':0}
       }],
       createdAt: new Date(),
-      players: [null, null],
+      players: [null, (vsComputer?vsComputer:null)],      // 玩家的 username
       role: [null, null],         // 玩家的職業 WAR HUT MAG
       skill: [true, true],        // 記錄技能是否可以施展 true 可以, false 不能
       playersOnOff: [null, null], // 紀錄玩家在不在房間的狀況
@@ -107,6 +88,8 @@ Meteor.methods({
       flashdots: [],              // 要執行閃爍動畫的子的座標陣列
       lastStepDots: [],           // 紀錄上一步驟的子的座標 方便加上灰底
       breakOnOff: 'off',          // 紀錄獵人技能是否開啟
+      fungi: [],                  // 紀錄生長的香菇座標 方便加上綠底
+      vsComputer,          // 紀錄和玩家打, 還是和電腦打
     });
   },
 
@@ -129,21 +112,21 @@ Meteor.methods({
       if(dot_num > i) {
         p2 = Math.floor(Math.random()*100);
 
-        if( scene == 'pirate' ) { // 海盜巢穴
+        if( scene == 'pirate' || scene == 'forest' ) { // 海盜巢穴 蘑菇森林
 
-          if(p2<1)       kyu.push(5)
-          else if(p2<3)  kyu.push(4)
-          else if(p2<7)  kyu.push(3)
-          else if(p2<15) kyu.push(2)
-          else if(p2<22) kyu.push(6)
+          if(p2<3)       kyu.push(5)
+          else if(p2<7)  kyu.push(4)
+          else if(p2<13) kyu.push(3)
+          else if(p2<21) kyu.push(2)
+          else if(p2<31) kyu.push(6)
           else           kyu.push(1)
 
-        } else { // 國王陵墓
+        } else { // 國王陵墓 煉金工坊
 
-          if(p2<1)       kyu.push(5)
-          else if(p2<3)  kyu.push(4)
-          else if(p2<7)  kyu.push(3)
-          else if(p2<15) kyu.push(2)
+          if(p2<3)       kyu.push(5)
+          else if(p2<7)  kyu.push(4)
+          else if(p2<13) kyu.push(3)
+          else if(p2<21) kyu.push(2)
           else           kyu.push(1)
 
         }
@@ -221,9 +204,16 @@ Meteor.methods({
           if( !(cv[0]==x && cv[1]==y) ) lastStepDots.push(cv);
         });
 
+        // 移除掉 fungi 裡面那些準備要閃爍移除的子, 這樣才不會造成連線的子移除後 綠色底還留下的情況
+        let fungi = [];
+        const oldfungi = Eleven.findOne(id).fungi;
+        oldfungi.map(cv => {
+          if( !(cv[0]==x && cv[1]==y) ) fungi.push(cv);
+        });
+
         let newPattern = Eleven.findOne(id).pattern;
         newPattern[y][x] = 0;
-        Eleven.update( id, { $set: { pattern: newPattern, flashdots: [], lastStepDots } });
+        Eleven.update( id, { $set: { pattern: newPattern, flashdots: [], lastStepDots, fungi } });
 
       }, 2400);
 
@@ -259,6 +249,10 @@ Meteor.methods({
 
   'eleven.calcPoints': function( id, dotsArrs, who, skill ) {
     var pattern = Eleven.findOne(id).pattern; // 這裡得到的是已經填子並更新後的 pattern
+    const scene = Eleven.findOne(id).scene;
+    const vsComputer = Eleven.findOne(id).vsComputer;
+    const kyu = Eleven.findOne(id).kyu;
+
     let uniqueXY = [];
     let combo = dotsArrs.length, // 計算 combo
         colorDots = {'green':0, 'blue':0, 'purple':0, 'golden':0, 'skull':0},
@@ -266,7 +260,8 @@ Meteor.methods({
 
     dotsArrs.map(cv => {
       let l = cv.length;
-      if( l>=6 ) renju['r'+l]++; // 計算 renju
+      if( l>=6 && l<12 ) renju['r'+l]++; // 計算 renju
+      else if( l>=12 ) renju['r11']++;
       uniqueXY = uniqueXY.concat(cv);
     });
 
@@ -288,6 +283,100 @@ Meteor.methods({
       pattern[y][x] = 0;
     });
 
+    // forest 特殊場景機制 ----------------------------------------
+    function canFungiGrow( pattern, x, y ) {
+      if( (x!=0  &&  x!=19  &&  y!=0  &&  y!=19
+          && pattern[y-1][x-1] == 0 && pattern[y-1][x] == 0 && pattern[y-1][x+1] == 0 && pattern[y][x-1] == 0
+          && pattern[y][x+1] == 0 && pattern[y+1][x-1] == 0 && pattern[y+1][x] == 0 && pattern[y+1][x+1] == 0)
+          || (x==0  &&  y!=0  &&  y!=19
+              && pattern[y-1][x] == 0 && pattern[y-1][x+1] == 0
+              && pattern[y][x+1] == 0 && pattern[y+1][x] == 0 && pattern[y+1][x+1] == 0)
+          || (x==19  &&  y!=0  &&  y!=19
+              && pattern[y-1][x-1] == 0 && pattern[y-1][x] == 0 && pattern[y][x-1] == 0
+              && pattern[y+1][x-1] == 0 && pattern[y+1][x] == 0)
+          || (y==0  &&  x!=0  &&  x!=19
+              && pattern[y][x-1] == 0
+              && pattern[y][x+1] == 0 && pattern[y+1][x-1] == 0 && pattern[y+1][x] == 0 && pattern[y+1][x+1] == 0)
+          || (y==19  &&  x!=0  &&  x!=19
+              && pattern[y-1][x-1] == 0 && pattern[y-1][x] == 0 && pattern[y-1][x+1] == 0 && pattern[y][x-1] == 0
+              && pattern[y][x+1] == 0)
+        ) { return true }
+      return false
+    }
+    // 決定哪些座標可以生長香菇
+    var fungi = [];
+    if( scene == 'forest' ) {
+      for(let i=0; i<30; i++) {
+        let x = Math.floor(Math.random()*20), y = Math.floor(Math.random()*20);
+        if( pattern[y][x] == 0) { // 該座標沒有香菇
+          if( canFungiGrow( pattern, x, y ) ) { // 該座標可以生長香菇嗎？
+            fungi.push([x,y]);
+          }
+        }
+      }
+      // 決定香菇生長的上限數量
+      let fn = Math.floor(Math.random()*100), fungiNumber;
+        if(fn<15)      fungiNumber = 3;
+        else if(fn<35) fungiNumber = 4;
+        else if(fn<65) fungiNumber = 5;
+        else if(fn<85) fungiNumber = 6;
+        else           fungiNumber = 7;
+
+      if( fungi.length > fungiNumber ) fungi = fungi.slice(0, fungiNumber);
+      // map 香菇陣列, 更新 pattern
+      fungi.map(cv => {
+        let p2 = Math.floor(Math.random()*100), num = 1;
+          if(p2<3)       num = 5;
+          else if(p2<7)  num = 4;
+          else if(p2<13) num = 3;
+          else if(p2<21) num = 2;
+          else if(p2<25) num = 6; // 長出毒菇的機率略低
+          else           num = 1;
+        let x = cv[0], y = cv[1];
+        pattern[y][x] = num;
+      });
+    }
+    //----------------------------------------
+
+    // alchemy 特殊場景機制 ----------------------------------------
+    function createOneItem() {
+      let p2 = Math.floor(Math.random()*100), num = 0;
+      if( Math.random() < 0.86 ) {
+        if(p2<3)       num = 5;
+        else if(p2<7)  num = 4;
+        else if(p2<13) num = 3;
+        else if(p2<21) num = 2;
+        else           num = 1;
+      }
+      return num;
+    }
+    if( scene == 'alchemy' ) {
+      for(let y=19; y>=4; y--) {
+        for(let x=2; x<=4; x++) {
+          if( y != 4 ) pattern[y][x] = pattern[y-1][x];
+          else if( y == 4 ) pattern[y][x] = createOneItem();
+        }
+      }
+      for(let y=0; y<=12; y++) {
+        for(let x=6; x<=8; x++) {
+          if( y != 12 ) pattern[y][x] = pattern[y+1][x];
+          else if( y == 12 ) pattern[y][x] = createOneItem();
+        }
+      }
+      for(let y=19; y>=7; y--) {
+        for(let x=11; x<=13; x++) {
+          if( y != 7 ) pattern[y][x] = pattern[y-1][x];
+          else if( y == 7 ) pattern[y][x] = createOneItem();
+        }
+      }
+      for(let y=0; y<=15; y++) {
+        for(let x=15; x<=17; x++) {
+          if( y != 15 ) pattern[y][x] = pattern[y+1][x];
+          else if( y == 15 ) pattern[y][x] = createOneItem();
+        }
+      }
+    }
+    //----------------------------------------
 
     // 更新遊戲資料
     if( Meteor.isServer && uniqueXY.length !=0 ){
@@ -302,8 +391,10 @@ Meteor.methods({
 
       Meteor.setTimeout(() => {
 
-        Eleven.update( id, { $set: { pattern, flashdots: [], lastStepDots }, $push: { scoreInfo } });
+        Eleven.update( id, { $set: { pattern, flashdots: [], lastStepDots, fungi }, $push: { scoreInfo } });
         Meteor.call('eleven.skillUnLock', id);
+
+        if( vsComputer=='Faker' && who==0 ) Meteor.call('eleven.handleComputer', id, pattern, scene, kyu );
 
       }, 2400);
 
@@ -312,11 +403,55 @@ Meteor.methods({
       // 閃動特效
       Eleven.update( id, { $set: { flashdots: uniqueXY } });
 
-    } else if( uniqueXY.length ==0 ) {
+    } else if( Meteor.isServer && uniqueXY.length ==0 ) {
       // 沒有連線的子的話 馬上更新不用特效了
-      Eleven.update( id, { $set: { pattern }, $push: { scoreInfo } });
+      Eleven.update( id, { $set: { pattern, fungi }, $push: { scoreInfo } });
       // 填子後, skill 變成 true, 這樣下一回合才可以使用技能
       Meteor.call('eleven.skillUnLock', id);
+
+      if( vsComputer=='Faker' && who==0 ) Meteor.call('eleven.handleComputer', id, pattern, scene, kyu );
+
+    }
+
+  },
+
+  'eleven.handleComputer': function( id, pattern, scene, kyu  ) {
+
+    var maxPoint = 0,      // 紀錄可以獲得的最高分數
+        samePointArr = []; // 放入可以得到最高同樣分數的所有座標
+    pattern.map( (cv, y, arr) => {
+      cv.map( (el, x) => {
+        if( x!=0 && x!=19 && y!=0 && y!=19 ) { // 邊框線不能放子
+
+          let obj = xyPoint( x, y, kyu[1], arr ); // return { p, dotsArrs }; p 是該座標如果放子的話可以得到的分數
+          obj.XY = [x, y];
+
+          if( obj.p!='cant put dot' ) {
+            if( obj.p > maxPoint ) {
+              maxPoint = obj.p;
+              samePointArr = [ obj ];
+
+            } else if( obj.p == maxPoint ) {
+              samePointArr.push( obj );
+            }
+          }
+        }
+      })
+    });
+
+    const len = samePointArr.length,
+          idx = Math.floor(Math.random()*len),
+          tate = samePointArr[idx].XY[0],
+          yoko = samePointArr[idx].XY[1];
+
+
+    if( Meteor.isServer ){ // 等待一小段時間 再讓電腦下棋
+      Meteor.setTimeout(() => {
+
+        Meteor.call('eleven.putdot', id, tate, yoko, kyu, pattern, 1, scene);
+        Meteor.call('eleven.calcPoints', id, samePointArr[idx].dotsArrs, 1, null); // 似乎不需要 skill 參數
+
+      }, 1000);
     }
 
   },
